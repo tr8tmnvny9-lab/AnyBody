@@ -1,0 +1,7 @@
+[package]
+name = "body_physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro_core = { path = "../neuro_core" }

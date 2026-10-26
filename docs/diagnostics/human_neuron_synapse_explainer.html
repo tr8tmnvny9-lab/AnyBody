@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fig. 1 | 7-Neuron Sensorimotor Signal Propagation & Synaptic Transformation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    background: #080c14;
+    color: #e2e8f0;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    border-bottom: 1px solid #1e293b;
+    background: #0b111d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .fig-title { font-size: 13px; font-weight: 700; color: #f8fafc; }
+  .fig-sub { font-size: 11px; color: #94a3b8; font-family: ui-monospace, monospace; margin-top: 2px; }
+  .controls { display: flex; gap: 6px; align-items: center; }
+  .btn {
+    background: #111827;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
+    cursor: pointer;
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+  .btn.active { background: #0284c7; border-color: #38bdf8; color: #ffffff; }
+  .btn-link { text-decoration: none; color: #38bdf8; border-color: #0284c7; }
+  #figure-body {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    gap: 8px;
+    overflow: hidden;
+  }
+  #canvas-container {
+    flex: 1 1 0;
+    min-height: 0;
+    background: #060911;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  canvas#figCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .telemetry-bar {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+  }
+  .t-cell {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .t-key { color: #94a3b8; }
+  .t-val { color: #38bdf8; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="fig-title">Figure 1 | End-to-End Signal Propagation Across a 7-Neuron Cortico-Cerebello-Spinal Microcircuit (N1 → N7 → Joint Torque τ)</div>
+    <div class="fig-sub">Showing how discrete sensory spikes &amp; prefrontal goals transform across 4 synapse types into smooth, low-wattage musculoskeletal actuation</div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="m0" onclick="setRegime(0)">I. Clock-Gated Quiescence</button>
+    <button class="btn" id="m1" onclick="setRegime(1)">II. Basal Reflex Only (SST Clamped)</button>
+    <button class="btn active" id="m2" onclick="setRegime(2)">III. Full 7-Neuron BAC Cascade → Torque</button>
+    <button class="btn" id="pauseBtn" onclick="togglePause()">Pause</button>
+    <a class="btn btn-link" href="/">← 3D Viewer</a>
+  </div>
+</header>
+
+<div id="figure-body">
+  <div id="canvas-container">
+    <canvas id="figCanvas"></canvas>
+  </div>
+
+  <div class="telemetry-bar">
+    <div class="t-cell"><span class="t-key">1. Synaptic Clock-Gating</span><span class="t-val" id="t-pwr">84.2% Silent (186.5k / 1.18M SynOps · 194.2 mW)</span></div>
+    <div class="t-cell"><span class="t-key">2. Cortical Transformation (N4)</span><span class="t-val">V_basal + V_apical → 20ms Ca²⁺ Plateau (300 Hz Burst)</span></div>
+    <div class="t-cell"><span class="t-key">3. Cerebellar &amp; Spinal Filtering (N5, N6)</span><span class="t-val">44ms mGluR1 Delay + Graded Sigmoid g_syn(V)</span></div>
+    <div class="t-cell"><span class="t-key">4. Mechanical Output (N7 → Muscle)</span><span class="t-val" id="t-mech">422.0 W Neuromorphic vs 1,220.7 W Stiff PD (2.89×)</span></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('figCanvas');
+const ctx = canvas.getContext('2d');
+let regime = 2;
+let paused = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let phase = 0;
+
+function setRegime(r) {
+  regime = r;
+  [0, 1, 2].forEach(i => {
+    const el = document.getElementById('m' + i);
+    if (el) el.className = (i === r) ? 'btn active' : 'btn';
+  });
+}
+
+function togglePause() {
+  paused = !paused;
+  const el = document.getElementById('pauseBtn');
+  if (el) el.textContent = paused ? 'Resume' : 'Pause';
+}
+document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
+
+async function pollLive() {
+  if (document.hidden) return;
+  try {
+    const res = await fetch('/state');
+    if (res.ok) {
+      const s = await res.json();
+      if (s.sparsity_pct !== undefined) {
+        document.getElementById('t-pwr').textContent =
+          `${s.sparsity_pct.toFixed(1)}% Silent (${(s.synops / 1000).toFixed(1)}k / 1.18M SynOps · ${s.comp_mw.toFixed(1)} mW)`;
+        document.getElementById('t-mech').textContent =
+          `${s.muscle_w.toFixed(1)} W Neuromorphic vs ${s.stiff_w.toFixed(1)} W Stiff PD (${s.eff_mult.toFixed(2)}×)`;
+      }
+    }
+  } catch (_) {}
+}
+setInterval(pollLive, 350);
+
+function drawBox(x, y, w, h, stroke, fill = '#0b1220', lw = 1.4) {
+  ctx.fillStyle = fill;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  ctx.strokeRect(x, y, w, h);
+}
+
+function drawEdge(x1, y1, x2, y2, color, isInhibitory, active, phaseOffset) {
+  ctx.strokeStyle = active ? color : '#334155';
+  ctx.lineWidth = active ? 2.0 : 1.2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.save();
+  ctx.translate(x2, y2);
+  ctx.rotate(ang);
+  if (isInhibitory) {
+    // Perpendicular bar for GABAergic inhibition (⊣)
+    ctx.strokeStyle = active ? color : '#475569';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(0, 6);
+    ctx.stroke();
+  } else {
+    // Excitatory arrowhead (→)
+    ctx.fillStyle = active ? color : '#475569';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-8, -4.5);
+    ctx.lineTo(-8, 4.5);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+
+  if (active) {
+    const u = ((phase * 1.1 + phaseOffset) % 1 + 1) % 1;
+    const px = x1 + (x2 - x1) * u;
+    const py = y1 + (y2 - y1) * u;
+    ctx.beginPath();
+    ctx.arc(px, py, 3.8, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+}
+
+function drawMiniWave(x, y, w, h, title, eq, color, fn) {
+  drawBox(x, y, w, h, '#1e293b', '#070b12', 1.0);
+  ctx.fillStyle = color;
+  ctx.font = 'bold 10px ui-monospace, monospace';
+  ctx.fillText(title, x + 6, y + 13);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '9.5px ui-monospace, monospace';
+  ctx.fillText(eq, x + 6, y + 25);
+
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  const plotY0 = y + 32;
+  const plotH = h - 38;
+  for (let i = 0; i <= 80; i++) {
+    const u = i / 80;
+    const val = Math.max(0, Math.min(1, fn(u)));
+    const px = x + 6 + u * (w - 12);
+    const py = plotY0 + plotH - val * plotH;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+}
+
+function render() {
+  if (!document.hidden) {
+    const wCss = canvas.clientWidth;
+    const hCss = canvas.clientHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const targetW = Math.floor(wCss * dpr);
+    const targetH = Math.floor(hCss * dpr);
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    const W = wCss, H = hCss;
+    if (!paused) phase += 0.012;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Layout:
+    // Top 56% of Canvas: The 7 Connected Neurons (N1..N7) + Muscle Output Schematic
+    // Bottom 42% of Canvas: 7 Synchronized Signal Transformation Oscilloscopes (Stage 1 -> Stage 7)
+    const topH = H * 0.56;
+    const botY = H * 0.58;
+    const botH = H - botY - 10;
+
+    // 7 Horizontal Stage Columns across width W
+    const nCols = 7;
+    const padX = 14;
+    const colW = (W - padX * 2) / nCols;
+    const cx = (i) => padX + colW * (i + 0.5);
+
+    // Node Y positions in the circuit diagram
+    const yMid = topH * 0.56;
+    const yTop = topH * 0.20;
+    const yBot = topH * 0.84;
+
+    const activeSensory = (regime !== 0);
+    const activeGoal = (regime === 2);
+
+    // Draw Propagating Synaptic Connections FIRST (behind neuron somas)
+    // 1. N1 (Proprioceptive Afferent) -> N4 Basal Dendrite (Excitatory Spiking)
+    drawEdge(cx(0) + 46, yMid, cx(3) - 52, yMid + 14, '#38bdf8', false, activeSensory, 0.0);
+    // 2. N1 (Proprioceptive Afferent) -> N5 Cerebellar Granule/PF (Mossy Fiber)
+    drawEdge(cx(0) + 46, yMid + 12, cx(4) - 48, yTop + 10, '#38bdf8', false, activeSensory, 0.15);
+    // 3. N2 (VIP Interneuron) ⊣ N3 (SST Martinotti Cell) [GABAergic Disinhibition]
+    drawEdge(cx(1) + 44, yTop, cx(2) - 44, yTop, '#34d399', true, activeGoal, 0.1);
+    // 4. N3 (SST Interneuron) ⊣ N4 Apical Tuft [Clamps Apical Ca2+ when VIP is silent]
+    drawEdge(cx(2) + 44, yTop, cx(3) - 52, yMid - 24, '#f59e0b', true, !activeGoal && activeSensory, 0.2);
+    // 5. Top-Down Task Vector (<W_pull, e_3d>_+) -> N4 Apical Tuft
+    drawEdge(cx(1) + 44, yTop + 22, cx(3) - 52, yMid - 14, '#c084fc', false, activeGoal, 0.2);
+    // 6. N4 (L5 Pyramidal Cell) -> N5 (Cerebellar mGluR1 Delay Cell) [Efference Copy]
+    drawEdge(cx(3) + 52, yMid - 12, cx(4) - 48, yTop + 22, '#f59e0b', false, activeSensory, 0.35);
+    // 7. N4 (L5 Pyramidal Cell) -> N6 (Spinal C. elegans Graded Interneuron)
+    drawEdge(cx(3) + 52, yMid + 8, cx(5) - 48, yMid, '#f59e0b', false, activeSensory, 0.45);
+    // 8. N5 (Cerebellar Purkinje/DCN) -> N6 (Predictive Delay Correction)
+    drawEdge(cx(4) + 48, yTop + 16, cx(5) - 48, yMid - 12, '#eab308', false, activeSensory, 0.55);
+    // 9. N6 (Spinal Graded Interneuron) -> N7 (Alpha Motoneuron, Agonist Excitation)
+    drawEdge(cx(5) + 48, yMid - 6, cx(6) - 50, yTop + 22, '#34d399', false, activeSensory, 0.70);
+    // 10. N6 (Spinal Ia Inhibitory Interneuron) ⊣ Antagonist Motoneuron (Silences Co-Contraction!)
+    drawEdge(cx(5) + 48, yMid + 12, cx(6) - 50, yBot - 10, '#f43f5e', true, activeSensory, 0.70);
+
+    // Helper to draw each Neuron Node Card
+    function drawNeuronNode(colIdx, y, title, subtitle, synapseType, borderCol) {
+      const x = cx(colIdx) - 50;
+      const w = 100, h = 68;
+      drawBox(x, y - h / 2, w, h, borderCol, '#0b1220', 1.6);
+      ctx.fillStyle = borderCol;
+      ctx.font = 'bold 10px ui-monospace, monospace';
+      ctx.fillText(title, x + 6, y - h / 2 + 15);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '9.5px sans-serif';
+      ctx.fillText(subtitle, x + 6, y - h / 2 + 31);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.fillText(synapseType, x + 6, y - h / 2 + 47);
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`Stage ${colIdx + 1}`, x + 6, y - h / 2 + 61);
+    }
+
+    // Draw the 7 Connected Neurons
+    drawNeuronNode(0, yMid, 'N1 · Ia Spindle', 'Sensory Afferent', 'Rate-Coded Spikes', activeSensory ? '#38bdf8' : '#475569');
+    drawNeuronNode(1, yTop + 8, 'N2 · VIP Cell', 'Prefrontal Gate', 'GABA Disinhibitor', activeGoal ? '#34d399' : '#475569');
+    drawNeuronNode(2, yTop + 8, 'N3 · SST Cell', 'Apical Clamp', activeGoal ? 'Silenced by N2' : 'Clamping V_apical', !activeGoal ? '#f59e0b' : '#475569');
+
+    // N4: Special 3-Compartment Visual Card (Apical + Soma + Basal)
+    {
+      const x4 = cx(3) - 54, y4 = yMid - 48, w4 = 108, h4 = 96;
+      drawBox(x4, y4, w4, h4, activeGoal ? '#f59e0b' : (activeSensory ? '#38bdf8' : '#475569'), '#0b1220', 1.8);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 10px ui-monospace, monospace';
+      ctx.fillText('N4 · L5 Pyramidal', x4 + 6, y4 + 14);
+      ctx.fillStyle = activeGoal ? '#fbbf24' : '#64748b';
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.fillText('Apical: ⟨W_pull,e_3d⟩', x4 + 6, y4 + 30);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('Trunk: Ca²⁺ Plateau', x4 + 6, y4 + 45);
+      ctx.fillStyle = activeSensory ? '#38bdf8' : '#64748b';
+      ctx.fillText('Basal: Ia + Foot GRF', x4 + 6, y4 + 60);
+      ctx.fillStyle = activeGoal ? '#34d399' : '#94a3b8';
+      ctx.fillText(activeGoal ? 'OUT: 300Hz BAC Burst' : (activeSensory ? 'OUT: Single Spike' : 'OUT: Silent (0Hz)'), x4 + 6, y4 + 78);
+    }
+
+    drawNeuronNode(4, yTop + 16, 'N5 · Purkinje/GC', 'mGluR1 Delay', 'τ=11ms (Peak 44ms)', activeSensory ? '#eab308' : '#475569');
+    drawNeuronNode(5, yMid, 'N6 · Graded L3', 'Elegans Sigmoid', 'Continuous g_syn(V)', activeSensory ? '#34d399' : '#475569');
+
+    // Column 7: N7 Agonist Alpha-MN (Top) + Antagonist Alpha-MN (Bottom, Inhibited) -> Hill Muscle Torque
+    drawNeuronNode(6, yTop + 22, 'N7a · Agonist αMN', 'Hill Muscle Drive', 'τ_joint = +42.8 N·m', activeSensory ? '#38bdf8' : '#475569');
+    drawNeuronNode(6, yBot - 12, 'N7b · Antag. αMN', 'Ia Reciprocal Inh.', 'Co-Contraction = 0W', '#f43f5e');
+
+    // Explanatory Banner across middle separator
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 10px ui-monospace, monospace';
+    ctx.fillText(
+      'SIGNAL TRANSFORMATION ACROSS THE 7 NEURONS:  [1] Raw Sensory Spikes → [2] VIP Disinhibition → [3] SST Gate Opens → [4] 300Hz Ca²⁺ Burst → [5] 44ms Delay Filter → [6] Smooth Graded Conductance → [7] Zero-Waste Muscle Torque',
+      padX,
+      botY - 6
+    );
+
+    // =========================================================================
+    // BOTTOM ROW: 7 SYNCHRONIZED OSCILLOSCOPES (1 BELOW EACH NEURON STAGE)
+    // =========================================================================
+    const wBox = colW - 8;
+    // Trace 1: N1 Sensory Spike Train
+    drawMiniWave(padX + colW * 0, botY, wBox, botH, '1. N1 Sensory S_1(t)', 'Ia Spindle (80 Hz)', '#38bdf8', (u) => {
+      if (!activeSensory) return 0.05;
+      const p = ((u * 5 - phase * 1.2) % 1 + 1) % 1;
+      return p < 0.12 ? 0.90 : 0.08;
+    });
+
+    // Trace 2: N2 VIP Disinhibitory Drive
+    drawMiniWave(padX + colW * 1, botY, wBox, botH, '2. N2 VIP Gate a_VIP', 'Prefrontal Goal Gate', '#34d399', (u) => {
+      if (!activeGoal) return 0.08;
+      return 0.78 + 0.08 * Math.sin(u * 6 - phase * 2);
+    });
+
+    // Trace 3: N3 SST Apical Inhibition
+    drawMiniWave(padX + colW * 2, botY, wBox, botH, '3. N3 SST I_SST(t)', 'g_SST · (1 - a_VIP)', '#f59e0b', (u) => {
+      if (!activeSensory) return 0.20;
+      return activeGoal ? 0.10 : 0.82 + 0.05 * Math.sin(u * 8 - phase);
+    });
+
+    // Trace 4: N4 L5 Pyramidal Output (Single Spike vs 300 Hz BAC Ca2+ Burst)
+    drawMiniWave(padX + colW * 3, botY, wBox, botH, '4. N4 Soma S_4(t)', activeGoal ? '300 Hz BAC Ca²⁺ Burst' : 'Single Na⁺ Spikes', '#fbbf24', (u) => {
+      if (!activeSensory) return 0.05;
+      const w = ((u * 2 - phase * 0.5) % 1 + 1) % 1;
+      if (!activeGoal) return Math.abs(w - 0.3) < 0.03 ? 0.85 : 0.08;
+      if (w > 0.2 && w < 0.65) return Math.sin(w * 90) > 0.3 ? 0.94 : 0.22;
+      return 0.08;
+    });
+
+    // Trace 5: N5 Cerebellar 44ms Spectral Delay Eligibility & Predictive DCN
+    drawMiniWave(padX + colW * 4, botY, wBox, botH, '5. N5 Delay E_PF(t)', '(t/τ)⁴ exp(-t/τ) [44ms]', '#eab308', (u) => {
+      if (!activeSensory) return 0.05;
+      const dt = ((u * 1.6 - phase * 0.4) % 1 + 1) % 1;
+      return Math.min(0.95, 0.08 + Math.pow(dt * 3.8, 3) * Math.exp(-dt * 5.2) * 0.45);
+    });
+
+    // Trace 6: N6 C. elegans Graded Conductance g_syn(V)
+    drawMiniWave(padX + colW * 5, botY, wBox, botH, '6. N6 Graded g_syn(V)', 'g_max / (1 + e^{-(V-V0)/k})', '#34d399', (u) => {
+      if (!activeSensory) return 0.06;
+      const amp = activeGoal ? 0.78 : 0.32;
+      return 0.12 + amp * (0.5 + 0.5 * Math.sin(u * Math.PI * 2 - phase * 1.5));
+    });
+
+    // Trace 7: N7 Hill Muscle Force & Joint Angle Convergence (Useful Mechanical Output!)
+    drawMiniWave(padX + colW * 6, botY, wBox, botH, '7. Joint Torque τ(t)', 'f_m = a_m·f_l(l)·f_v(v)', '#f43f5e', (u) => {
+      if (!activeSensory) return 0.05;
+      const target = activeGoal ? 0.86 : 0.35;
+      return target * (1.0 - Math.exp(-u * 4.5));
+    });
+
+    ctx.restore();
+  }
+  requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+</script>
+</body>
+</html>

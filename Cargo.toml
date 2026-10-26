@@ -1,0 +1,29 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/neuro_core",
+    "crates/body_physics",
+    "crates/subsystems",
+    "crates/telemetry_viz",
+    "crates/v3_runner",
+]
+
+[workspace.package]
+version = "0.4.0"
+edition = "2021"
+authors = ["Oscar Kinnala <oscar@anybody.ai>"]
+license = "MIT"
+description = "AnyBody (A://) — Universal Zero-Shot Neuromorphic Spiking Connectome for 3D Humanoids & Multi-Morphology Robotics"
+repository = "https://github.com/oscarkinnala/AnyBody"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 2
+
+[profile.test]
+opt-level = 2

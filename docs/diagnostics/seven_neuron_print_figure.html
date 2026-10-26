@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Single-Slide Technical Figure | Intracellular L5 Pyramidal Biophysics &amp; 7-Neuron Cortico-Cerebello-Spinal Signal Propagation</title>
+<style>
+  @page {
+    size: 297mm 210mm;
+    margin: 0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body {
+    width: 297mm;
+    height: 210mm;
+    overflow: hidden;
+    background: #ffffff;
+    color: #0f172a;
+    font-family: "Helvetica Neue", Arial, -apple-system, sans-serif;
+    padding: 5.5mm 8mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .header {
+    border-bottom: 1.5px solid #0f172a;
+    padding-bottom: 1.5mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header h1 {
+    font-size: 11.5pt;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.2px;
+  }
+  .header .sub {
+    font-size: 7.6pt;
+    color: #334155;
+    margin-top: 0.5mm;
+    font-family: "Menlo", "Consolas", monospace;
+  }
+  .header .badge {
+    font-size: 7.2pt;
+    font-family: "Menlo", monospace;
+    background: #f1f5f9;
+    border: 1px solid #94a3b8;
+    padding: 1mm 2.2mm;
+    border-radius: 3px;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 42% 57%;
+    justify-content: space-between;
+    height: 115mm;
+    gap: 1%;
+  }
+  .panel-box {
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 100%;
+  }
+  .panel-box svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  table.xform-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 6.8pt;
+    line-height: 1.18;
+  }
+  table.xform-table th {
+    background: #0f172a;
+    color: #ffffff;
+    text-align: left;
+    padding: 1mm 1.5mm;
+    font-weight: 700;
+    border: 1px solid #0f172a;
+  }
+  table.xform-table td {
+    padding: 0.85mm 1.5mm;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+    background: #ffffff;
+  }
+  table.xform-table tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .mono { font-family: "Menlo", "Consolas", monospace; font-size: 6.7pt; color: #0369a1; font-weight: 600; }
+  .eq-cell { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 7.6pt; color: #0f172a; }
+  .footer-caption {
+    font-size: 7pt;
+    color: #475569;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 1.2mm;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Figure 1 | Intracellular 3-Compartment Neuron Dynamics &amp; 7-Neuron Cortico-Cerebello-Spinal Signal Propagation</h1>
+    <div class="sub">Left (a, b): How one L5 Pyramidal Neuron &amp; 3-Factor Synapse work internally · Right (c, d): How 7 connected neurons transform spikes into smooth joint torque</div>
+  </div>
+  <div class="badge">1.18M Synapses · 84.2% Clock-Gated Sparsity · 194.2 mW Compute · 2.89× Performance/Watt</div>
+</div>
+
+<div class="main-grid">
+  <!-- ===================================================================== -->
+  <!-- LEFT PANEL (a & b): INSIDE ONE NEURON + INTRACELLULAR GRAPH           -->
+  <!-- ===================================================================== -->
+  <div class="panel-box">
+    <svg viewBox="0 0 480 520" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#0284c7"/>
+        </marker>
+        <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#d97706"/>
+        </marker>
+        <marker id="arr-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#7c3aed"/>
+        </marker>
+        <marker id="bar-r" viewBox="0 0 10 12" refX="2" refY="6" markerWidth="5" markerHeight="5" orient="auto">
+          <line x1="2" y1="0" x2="2" y2="12" stroke="#e11d48" stroke-width="3"/>
+        </marker>
+      </defs>
+
+      <!-- Sub-header a -->
+      <text x="10" y="17" font-size="10" font-weight="bold" fill="#0f172a">a | Inside Neuron N4 (Pyramidal3CompPoolSoA) &amp; Its Clock-Gated Synapse</text>
+
+      <!-- Anatomical & Compartmental Diagram Box -->
+      <rect x="10" y="24" width="460" height="202" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+
+      <!-- Left Zoom Inset: Clock-Gated 3-Factor Synapse -->
+      <rect x="18" y="32" width="168" height="186" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="3,2"/>
+      <text x="24" y="45" font-size="8.5" font-weight="bold" fill="#0369a1" font-family="Menlo, monospace">SYNAPSE (10 μm Scale)</text>
+
+      <!-- Presynaptic Terminal -->
+      <rect x="25" y="53" width="154" height="44" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.4"/>
+      <text x="31" y="66" font-size="8" font-weight="bold" fill="#075985">1. Presynaptic Clock-Gate</text>
+      <text x="31" y="78" font-size="7.5" font-family="Menlo, monospace" fill="#0f172a">if S_pre(t) == 0 → SKIP (0 W)</text>
+      <text x="31" y="90" font-size="7.2" fill="#0369a1">84.2% silent per 1ms step</text>
+
+      <!-- Cleft arrow -->
+      <line x1="102" y1="97" x2="102" y2="112" stroke="#0284c7" stroke-width="1.8" marker-end="url(#arr-b)"/>
+      <text x="108" y="108" font-size="7" font-family="Menlo, monospace" fill="#475569">Vesicle Release</text>
+
+      <!-- Postsynaptic Spine (3-Factor Rule) -->
+      <rect x="25" y="114" width="154" height="96" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.4"/>
+      <text x="31" y="127" font-size="8" font-weight="bold" fill="#92400e">2. Postsynaptic Spine (BTSP)</text>
+      <text x="31" y="140" font-size="7.5" font-family="Menlo, monospace" fill="#0f172a">I_syn = w_s·g_max(E_rev - V_m)</text>
+      <text x="31" y="153" font-size="7.5" font-family="Menlo, monospace" fill="#b45309">τ_e de_s/dt = -e_s + S_pre(t)</text>
+      <text x="31" y="166" font-size="7.5" font-family="Menlo, monospace" fill="#059669" font-weight="bold">Δw_s = η · e_s(t) · Φ_Ca(t)</text>
+      <text x="31" y="180" font-size="7.2" fill="#334155">Weight updates ONLY when</text>
+      <text x="31" y="191" font-size="7.2" fill="#334155">pre-eligibility e_s coincides</text>
+      <text x="31" y="202" font-size="7.2" fill="#334155">with dendritic Ca²⁺ plateau!</text>
+
+      <!-- Right Side of Box a: 3-Compartment Pyramidal Cell Morphology -->
+      <text x="198" y="45" font-size="8.5" font-weight="bold" fill="#0f172a" font-family="Menlo, monospace">3-COMPARTMENT NEURON (500 μm Scale)</text>
+
+      <!-- Compartment 1: Apical Tuft (V_a) -->
+      <rect x="228" y="53" width="196" height="44" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+      <text x="235" y="66" font-size="8" font-weight="bold" fill="#92400e">Comp 1: Apical Tuft (V_a)</text>
+      <text x="235" y="78" font-size="7.3" font-family="Menlo, monospace" fill="#0f172a">τ_a dV_a/dt = -V_a + I_ctx + I_Ca - I_SST</text>
+      <text x="235" y="90" font-size="7.2" fill="#b45309">Top-Down Input: ⟨W_pull[m,·], x* - x⟩_+</text>
+
+      <!-- Active Ca2+ Dendritic Trunk (Comp 2) -->
+      <line x1="326" y1="97" x2="326" y2="152" stroke="#d97706" stroke-width="5"/>
+      <rect x="242" y="110" width="168" height="30" rx="3" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.2"/>
+      <text x="248" y="122" font-size="7.8" font-weight="bold" fill="#b45309">Comp 2: Ca²⁺ Plateau Zone (g_as)</text>
+      <text x="248" y="134" font-size="7.2" font-family="Menlo, monospace" fill="#0f172a">Φ_Ca = 1 if (V_a &gt; θ_a ∧ Spike_bAP)</text>
+
+      <!-- SST Inhibition onto Apical -->
+      <line x1="462" y1="75" x2="426" y2="75" stroke="#e11d48" stroke-width="2" marker-end="url(#bar-r)"/>
+      <text x="428" y="68" font-size="7" font-family="Menlo, monospace" fill="#e11d48">SST</text>
+
+      <!-- Compartment 3: Soma & Basal Dendrites (V_s, V_b) -->
+      <rect x="228" y="152" width="196" height="60" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
+      <text x="235" y="165" font-size="8" font-weight="bold" fill="#075985">Comp 3: Soma &amp; Basal (V_s, V_b)</text>
+      <text x="235" y="177" font-size="7.3" font-family="Menlo, monospace" fill="#0f172a">C_m dV_s/dt = -g_L(V_s-E_L) + g_bs(V_b-V_s)</text>
+      <text x="235" y="188" font-size="7.3" font-family="Menlo, monospace" fill="#0f172a">              + g_as(V_a-V_s) - I_PV</text>
+      <text x="235" y="202" font-size="7.2" fill="#0369a1">Bottom-Up Input: Ia Spindle + Foot GRF</text>
+
+      <!-- Arrow from Synapse Inset to Basal/Apical -->
+      <path d="M 180 155 L 226 175" stroke="#0284c7" stroke-width="1.6" fill="none" marker-end="url(#arr-b)"/>
+
+      <!-- ================================================================= -->
+      <!-- SUB-PANEL b: INTRACELLULAR ELECTROPHYSIOLOGY GRAPH (t = 0..100ms) -->
+      <!-- ================================================================= -->
+      <text x="10" y="244" font-size="10" font-weight="bold" fill="#0f172a">b | Intracellular Time-Domain Graph Inside Neuron N4 (t = 0..100 ms)</text>
+      <rect x="10" y="250" width="460" height="262" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+
+      <!-- Shaded Regime Highlight Zones -->
+      <!-- Regime I: Basal-Only [15ms..42ms] -> x=105..215 -->
+      <rect x="105" y="258" width="105" height="232" fill="#f0f9ff"/>
+      <text x="110" y="270" font-size="7.5" font-weight="bold" fill="#0369a1">REGIME I: Basal Input Only</text>
+      <text x="110" y="280" font-size="7" fill="#475569">(SST Clamped → Single Spike)</text>
+
+      <!-- Regime II: Apical+Basal BAC Coincidence [52ms..88ms] -> x=255..410 -->
+      <rect x="255" y="258" width="155" height="232" fill="#fffbeb"/>
+      <text x="260" y="270" font-size="7.5" font-weight="bold" fill="#b45309">REGIME II: Basal + Apical Coincidence</text>
+      <text x="260" y="280" font-size="7" fill="#92400e">(VIP Silences SST → 20ms Ca²⁺ Burst + LTP)</text>
+
+      <!-- Horizontal Grid Separators for the 4 Internal Traces -->
+      <g stroke="#e2e8f0" stroke-width="1">
+        <line x1="52" y1="330" x2="458" y2="330"/>
+        <line x1="52" y1="385" x2="458" y2="385"/>
+        <line x1="52" y1="448" x2="458" y2="448"/>
+        <line x1="52" y1="490" x2="458" y2="490" stroke="#64748b"/>
+        <line x1="52" y1="258" x2="52" y2="490" stroke="#64748b"/>
+      </g>
+
+      <!-- Y-Axis Labels for the 4 Synchronized Internal Traces -->
+      <text x="15" y="302" font-size="7.5" font-weight="bold" fill="#059669" font-family="Menlo, monospace">1. e_s(t)</text>
+      <text x="15" y="313" font-size="6.8" fill="#475569">Eligibility</text>
+      <text x="15" y="323" font-size="6.8" fill="#475569">[0..1]</text>
+
+      <text x="15" y="352" font-size="7.5" font-weight="bold" fill="#d97706" font-family="Menlo, monospace">2. V_a(t)</text>
+      <text x="15" y="363" font-size="6.8" fill="#475569">Apical mV</text>
+      <text x="15" y="373" font-size="6.8" fill="#475569">[-70..-15]</text>
+
+      <text x="15" y="408" font-size="7.5" font-weight="bold" fill="#0284c7" font-family="Menlo, monospace">3. V_s(t)</text>
+      <text x="15" y="419" font-size="6.8" fill="#475569">Soma mV</text>
+      <text x="15" y="429" font-size="6.8" fill="#475569">[-70..+30]</text>
+
+      <text x="15" y="465" font-size="7.5" font-weight="bold" fill="#7c3aed" font-family="Menlo, monospace">4. w_s(t)</text>
+      <text x="15" y="476" font-size="6.8" fill="#475569">Syn Weight</text>
+      <text x="15" y="485" font-size="6.8" fill="#475569">Δw=η·e·Ca</text>
+
+      <!-- Trace 1: Presynaptic Eligibility e_s(t) (Green) -->
+      <path d="M 52 324 L 115 324 L 118 292 C 135 296, 165 318, 210 324 L 265 324 L 268 290 C 295 292, 345 305, 415 322 L 458 324" stroke="#059669" stroke-width="1.8" fill="none"/>
+      <text x="125" y="297" font-size="6.8" font-family="Menlo, monospace" fill="#059669">e_s decays (τ=20ms)</text>
+
+      <!-- Trace 2: Apical Tuft Potential V_apical(t) (Amber) -->
+      <!-- Threshold dashed line -->
+      <line x1="52" y1="355" x2="458" y2="355" stroke="#f59e0b" stroke-width="0.9" stroke-dasharray="3,3"/>
+      <text x="412" y="352" font-size="6.5" font-family="Menlo, monospace" fill="#b45309">θ_Ca (-35mV)</text>
+      <path d="M 52 379 L 118 379 C 125 370, 138 370, 155 379 L 268 379 C 274 375, 276 340, 284 338 L 362 338 C 372 340, 382 376, 398 379 L 458 379" stroke="#d97706" stroke-width="2" fill="none"/>
+      <text x="286" y="348" font-size="7" font-weight="bold" font-family="Menlo, monospace" fill="#92400e">20ms Ca²⁺ Plateau (Φ_Ca=1)</text>
+
+      <!-- Trace 3: Somatic Membrane Potential V_soma(t) (Blue) -->
+      <!-- Single spike in Regime I, 5-spike 300Hz burst in Regime II -->
+      <path d="M 52 440 L 118 440 L 124 432 L 126 392 L 128 444 L 135 440 L 268 440 L 274 430 L 276 390 L 279 435 L 290 390 L 293 435 L 304 390 L 307 435 L 318 390 L 321 435 L 332 390 L 335 435 L 346 390 L 349 442 L 458 440" stroke="#0284c7" stroke-width="1.6" fill="none"/>
+      <text x="132" y="405" font-size="7" font-family="Menlo, monospace" fill="#0369a1">1 Single Spike</text>
+      <text x="352" y="405" font-size="7" font-weight="bold" font-family="Menlo, monospace" fill="#075985">300 Hz BAC Burst (6 Spikes)</text>
+
+      <!-- Trace 4: Synaptic Weight w_s(t) (Purple) — Flat during single spike, steps up during Ca2+ plateau -->
+      <path d="M 52 482 L 276 482 C 295 480, 325 456, 360 455 L 458 455" stroke="#7c3aed" stroke-width="2.2" fill="none"/>
+      <text x="122" y="477" font-size="6.8" font-family="Menlo, monospace" fill="#64748b">Δw = 0 (No Ca²⁺ Plateau)</text>
+      <text x="364" y="467" font-size="7" font-weight="bold" font-family="Menlo, monospace" fill="#6d28d9">Δw &gt; 0 (Synergy Locked!)</text>
+
+      <!-- X-Axis Time Ticks (0 to 100 ms) -->
+      <g font-size="7" font-family="Menlo, monospace" fill="#334155">
+        <text x="48" y="503">0 ms</text>
+        <text x="125" y="503">20 ms</text>
+        <text x="206" y="503">40 ms</text>
+        <text x="287" y="503">60 ms</text>
+        <text x="368" y="503">80 ms</text>
+        <text x="438" y="503">100 ms</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- RIGHT PANEL (c & d): 7-NEURON CONNECTED CIRCUIT & WAVEFORM CASCADE    -->
+  <!-- ===================================================================== -->
+  <div class="panel-box">
+    <svg viewBox="0 0 650 520" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="r-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#0284c7"/>
+        </marker>
+        <marker id="r-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#d97706"/>
+        </marker>
+        <marker id="r-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#059669"/>
+        </marker>
+        <marker id="r-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#7c3aed"/>
+        </marker>
+        <marker id="r-inh-g" viewBox="0 0 10 12" refX="2" refY="6" markerWidth="5" markerHeight="5" orient="auto">
+          <line x1="2" y1="0" x2="2" y2="12" stroke="#059669" stroke-width="3"/>
+        </marker>
+        <marker id="r-inh-a" viewBox="0 0 10 12" refX="2" refY="6" markerWidth="5" markerHeight="5" orient="auto">
+          <line x1="2" y1="0" x2="2" y2="12" stroke="#d97706" stroke-width="3"/>
+        </marker>
+        <marker id="r-inh-r" viewBox="0 0 10 12" refX="2" refY="6" markerWidth="5" markerHeight="5" orient="auto">
+          <line x1="2" y1="0" x2="2" y2="12" stroke="#e11d48" stroke-width="3"/>
+        </marker>
+      </defs>
+
+      <!-- Stage Column Dividers -->
+      <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3">
+        <line x1="93" y1="24" x2="93" y2="515"/>
+        <line x1="186" y1="24" x2="186" y2="515"/>
+        <line x1="279" y1="24" x2="279" y2="515"/>
+        <line x1="372" y1="24" x2="372" y2="515"/>
+        <line x1="465" y1="24" x2="465" y2="515"/>
+        <line x1="558" y1="24" x2="558" y2="515"/>
+      </g>
+
+      <text x="10" y="17" font-size="10" font-weight="bold" fill="#0f172a">c | Connected 7-Neuron Sensorimotor Pathway (N1 → N7 → Hill-Muscle Torque τ)</text>
+      <line x1="0" y1="286" x2="650" y2="286" stroke="#94a3b8" stroke-width="1.2"/>
+      <text x="10" y="302" font-size="10" font-weight="bold" fill="#0f172a">d | Stage-by-Stage Signal Representation Transformation (Aligned to Neurons N1–N7)</text>
+
+      <!-- ================================================================= -->
+      <!-- SYNAPTIC EDGES IN 7-NEURON CIRCUIT                                -->
+      <!-- ================================================================= -->
+      <!-- N1 -> N4 Basal -->
+      <path d="M 84 172 L 284 192" stroke="#0284c7" stroke-width="2" fill="none" marker-end="url(#r-blue)"/>
+      <text x="102" y="204" font-size="7.3" font-family="Menlo, monospace" fill="#0284c7" font-weight="bold">S1→4: Clock-Gated AMPA (Ia → Basal V_b)</text>
+
+      <!-- N1 -> N5 Mossy Fiber -->
+      <path d="M 84 140 C 145 24, 310 24, 378 68" stroke="#0284c7" stroke-width="1.4" stroke-dasharray="3,2" fill="none" marker-end="url(#r-blue)"/>
+      <text x="185" y="34" font-size="7.2" font-family="Menlo, monospace" fill="#0284c7">Mossy Fiber → 180,224 Sparse Granules</text>
+
+      <!-- Prefrontal Goal -> N2 & N4 Apical -->
+      <path d="M 140 46 L 140 62" stroke="#7c3aed" stroke-width="1.8" fill="none" marker-end="url(#r-purple)"/>
+      <path d="M 140 46 L 315 46 L 315 72" stroke="#7c3aed" stroke-width="1.8" fill="none" marker-end="url(#r-purple)"/>
+      <text x="98" y="42" font-size="7.3" font-family="Menlo, monospace" fill="#7c3aed" font-weight="bold">Prefrontal Goal ⟨W_pull, x* - x⟩_+</text>
+
+      <!-- N2 (VIP) ⊣ N3 (SST) -->
+      <line x1="178" y1="102" x2="194" y2="102" stroke="#059669" stroke-width="2.2" marker-end="url(#r-inh-g)"/>
+      <text x="155" y="152" font-size="7.3" font-family="Menlo, monospace" fill="#059669" font-weight="bold">VIP ⊣ SST (Opens V_a)</text>
+
+      <!-- N3 (SST) ⊣ N4 Apical -->
+      <line x1="271" y1="102" x2="284" y2="102" stroke="#d97706" stroke-width="2" stroke-dasharray="2,2" marker-end="url(#r-inh-a)"/>
+
+      <!-- N4 -> N5 -->
+      <path d="M 366 122 L 378 102" stroke="#d97706" stroke-width="2" fill="none" marker-end="url(#r-amber)"/>
+
+      <!-- N4 -> N6 (300Hz BAC Burst) -->
+      <path d="M 366 168 L 472 168" stroke="#d97706" stroke-width="2.4" fill="none" marker-end="url(#r-amber)"/>
+      <text x="374" y="182" font-size="7.2" font-family="Menlo, monospace" fill="#b45309" font-weight="bold">300Hz BAC Burst</text>
+
+      <!-- N5 -> N6 (+44ms FEL) -->
+      <path d="M 458 102 L 472 142" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#r-green)"/>
+      <text x="380" y="148" font-size="7.2" font-family="Menlo, monospace" fill="#059669" font-weight="bold">+44ms FEL Drive</text>
+
+      <!-- N6 -> N7a (Agonist) & N7b (Antagonist Inhibited) -->
+      <path d="M 550 148 L 564 96" stroke="#059669" stroke-width="2.2" fill="none" marker-end="url(#r-green)"/>
+      <path d="M 550 172 L 564 218" stroke="#e11d48" stroke-width="2.2" fill="none" marker-end="url(#r-inh-r)"/>
+
+      <!-- ================================================================= -->
+      <!-- 7 CONNECTED NEURON CARDS (N1..N7)                                 -->
+      <!-- ================================================================= -->
+      <!-- N1 -->
+      <g transform="translate(8, 120)">
+        <rect width="76" height="84" rx="4" fill="#ffffff" stroke="#0284c7" stroke-width="1.8"/>
+        <rect width="76" height="18" rx="3" fill="#0284c7"/>
+        <text x="4" y="12" font-size="7.8" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N1 · Ia Sens</text>
+        <text x="4" y="30" font-size="7.5" font-weight="bold" fill="#0f172a">Spindle</text>
+        <text x="4" y="43" font-size="6.8" fill="#334155">ΔL, dL/dt</text>
+        <text x="4" y="57" font-size="6.8" font-family="Menlo, monospace" fill="#0284c7">80Hz Spikes</text>
+        <text x="4" y="71" font-size="6.5" fill="#64748b">Sensory In</text>
+      </g>
+
+      <!-- N2 -->
+      <g transform="translate(101, 64)">
+        <rect width="76" height="74" rx="4" fill="#ffffff" stroke="#059669" stroke-width="1.8"/>
+        <rect width="76" height="18" rx="3" fill="#059669"/>
+        <text x="4" y="12" font-size="7.8" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N2 · VIP</text>
+        <text x="4" y="30" font-size="7.5" font-weight="bold" fill="#0f172a">Goal Gate</text>
+        <text x="4" y="43" font-size="6.8" fill="#334155">Prefrontal</text>
+        <text x="4" y="57" font-size="6.8" font-family="Menlo, monospace" fill="#059669">Inhibits N3</text>
+      </g>
+
+      <!-- N3 -->
+      <g transform="translate(194, 64)">
+        <rect width="76" height="74" rx="4" fill="#ffffff" stroke="#d97706" stroke-width="1.8"/>
+        <rect width="76" height="18" rx="3" fill="#d97706"/>
+        <text x="4" y="12" font-size="7.8" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N3 · SST</text>
+        <text x="4" y="30" font-size="7.5" font-weight="bold" fill="#0f172a">Apical Clamp</text>
+        <text x="4" y="43" font-size="6.8" fill="#334155">Silenced:</text>
+        <text x="4" y="57" font-size="6.8" font-family="Menlo, monospace" fill="#b45309">I_SST → 0</text>
+      </g>
+
+      <!-- N4 (Highlighted as zoomed on Left Panel) -->
+      <g transform="translate(285, 74)">
+        <rect width="80" height="140" rx="5" fill="#fffbeb" stroke="#d97706" stroke-width="2.4"/>
+        <rect width="80" height="18" rx="3" fill="#0f172a"/>
+        <text x="4" y="12" font-size="7.6" font-weight="bold" fill="#38bdf8" font-family="Menlo, monospace">N4 · L5 Pyr</text>
+        <text x="4" y="30" font-size="7.2" font-weight="bold" fill="#92400e">1. Apical V_a</text>
+        <text x="4" y="41" font-size="6.6" font-family="Menlo, monospace" fill="#b45309">Ca²⁺ Plateau</text>
+        <line x1="6" y1="48" x2="74" y2="48" stroke="#cbd5e1"/>
+        <text x="4" y="61" font-size="7.2" font-weight="bold" fill="#0f172a">2. BAC Gate</text>
+        <text x="4" y="72" font-size="6.6" fill="#334155">See Panel a,b</text>
+        <line x1="6" y1="79" x2="74" y2="79" stroke="#cbd5e1"/>
+        <text x="4" y="92" font-size="7.2" font-weight="bold" fill="#075985">3. Soma V_s</text>
+        <text x="4" y="104" font-size="6.8" font-family="Menlo, monospace" fill="#0369a1">300Hz Burst</text>
+        <text x="4" y="118" font-size="6.5" fill="#e11d48">PV Divisive</text>
+      </g>
+
+      <!-- N5 -->
+      <g transform="translate(380, 60)">
+        <rect width="78" height="78" rx="4" fill="#ffffff" stroke="#ca8a04" stroke-width="1.8"/>
+        <rect width="78" height="18" rx="3" fill="#ca8a04"/>
+        <text x="4" y="12" font-size="7.6" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N5 · Purkinje</text>
+        <text x="4" y="30" font-size="7.3" font-weight="bold" fill="#0f172a">mGluR1 Delay</text>
+        <text x="4" y="43" font-size="6.7" font-family="Menlo, monospace" fill="#854d0e">(t/τ)⁴e^{-t/τ}</text>
+        <text x="4" y="56" font-size="6.7" fill="#334155">Peaks @ 44ms</text>
+        <text x="4" y="69" font-size="6.5" fill="#475569">Cancels lag</text>
+      </g>
+
+      <!-- N6 -->
+      <g transform="translate(473, 120)">
+        <rect width="78" height="84" rx="4" fill="#ffffff" stroke="#059669" stroke-width="1.8"/>
+        <rect width="78" height="18" rx="3" fill="#059669"/>
+        <text x="4" y="12" font-size="7.6" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N6 · Graded</text>
+        <text x="4" y="30" font-size="7.3" font-weight="bold" fill="#0f172a">C. elegans L3</text>
+        <text x="4" y="43" font-size="6.7" font-family="Menlo, monospace" fill="#065f46">σ(V_pre) Analog</text>
+        <text x="4" y="56" font-size="6.7" fill="#334155">Zero chatter</text>
+        <text x="4" y="70" font-size="6.7" font-weight="bold" fill="#e11d48">+ Ia Inh. Antag</text>
+      </g>
+
+      <!-- N7a (Agonist) -->
+      <g transform="translate(565, 42)">
+        <rect width="78" height="96" rx="4" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+        <rect width="78" height="18" rx="3" fill="#0284c7"/>
+        <text x="4" y="12" font-size="7.5" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N7a · Agonist</text>
+        <text x="4" y="29" font-size="7.3" font-weight="bold" fill="#0f172a">Hill Muscle</text>
+        <text x="4" y="42" font-size="6.6" font-family="Menlo, monospace" fill="#0369a1">a_m·f_l(l)·f_v</text>
+        <text x="4" y="56" font-size="7.2" font-weight="bold" fill="#059669">OUTPUT:</text>
+        <text x="4" y="69" font-size="7" font-weight="bold" fill="#0f172a">τ = +42.8 N·m</text>
+        <text x="4" y="82" font-size="6.5" fill="#475569">Smooth Pose θ*</text>
+      </g>
+
+      <!-- N7b (Antagonist Silenced) -->
+      <g transform="translate(565, 178)">
+        <rect width="78" height="76" rx="4" fill="#fff1f2" stroke="#e11d48" stroke-width="1.6"/>
+        <rect width="78" height="18" rx="3" fill="#e11d48"/>
+        <text x="4" y="12" font-size="7.5" font-weight="bold" fill="#ffffff" font-family="Menlo, monospace">N7b · Antag</text>
+        <text x="4" y="30" font-size="7.2" font-weight="bold" fill="#881337">Ia Silenced</text>
+        <text x="4" y="44" font-size="6.7" fill="#9f1239">a_antag = 0.02</text>
+        <text x="4" y="58" font-size="6.7" font-family="Menlo, monospace" fill="#be123c">0W Waste!</text>
+      </g>
+
+      <!-- ================================================================= -->
+      <!-- ROW d: 7 ALIGNED WAVEFORM PLOTS (Y = 312..508)                    -->
+      <!-- ================================================================= -->
+      <!-- 1. N1 Spikes -->
+      <g transform="translate(6, 314)">
+        <rect width="81" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#0284c7" font-family="Menlo, monospace">1. S_1(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">80Hz Spikes</text>
+        <path d="M 6 155 L 14 155 L 14 52 L 16 155 L 26 155 L 26 52 L 28 155 L 38 155 L 38 52 L 40 155 L 50 155 L 50 52 L 52 155 L 62 155 L 62 52 L 64 155 L 75 155" stroke="#0284c7" stroke-width="1.4" fill="none"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">Binary δ(t-t_k)</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Stretch Input</text>
+      </g>
+
+      <!-- 2. N2 VIP Step -->
+      <g transform="translate(99, 314)">
+        <rect width="81" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#059669" font-family="Menlo, monospace">2. a_VIP(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">Goal Gate</text>
+        <path d="M 6 155 L 22 155 L 28 58 L 75 58" stroke="#059669" stroke-width="2" fill="none"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">Gate ∈ [0, 1]</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Disinhibits N3</text>
+      </g>
+
+      <!-- 3. N3 SST Drop -->
+      <g transform="translate(192, 314)">
+        <rect width="81" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#d97706" font-family="Menlo, monospace">3. I_SST(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">Clamp Drop</text>
+        <path d="M 6 58 L 22 58 L 28 152 L 75 152" stroke="#d97706" stroke-width="2" fill="none"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">I_SST → 0</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Unclamps V_a</text>
+      </g>
+
+      <!-- 4. N4 BAC Burst -->
+      <g transform="translate(285, 314)">
+        <rect width="81" height="192" rx="3" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#b45309" font-family="Menlo, monospace">4. S_4(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#92400e">300Hz Burst</text>
+        <path d="M 6 155 L 24 155 C 27 65, 32 58, 60 60 C 64 62, 68 155, 75 155" stroke="#f59e0b" stroke-width="1.3" stroke-dasharray="2,2" fill="none"/>
+        <path d="M 6 155 L 14 155 L 14 105 L 16 155 L 28 155 L 29 48 L 31 148 L 36 48 L 38 148 L 43 48 L 45 148 L 50 48 L 52 148 L 57 48 L 59 155 L 75 155" stroke="#0f172a" stroke-width="1.2" fill="none"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">BAC Packet</text>
+        <text x="5" y="185" font-size="6.4" fill="#92400e">High Gain Drive</text>
+      </g>
+
+      <!-- 5. N5 44ms mGluR1 Delay Kernel -->
+      <g transform="translate(378, 314)">
+        <rect width="81" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#ca8a04" font-family="Menlo, monospace">5. E_PF(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">44ms Filter</text>
+        <path d="M 6 155 C 16 155, 26 148, 36 54 C 44 54, 58 130, 75 154" stroke="#ca8a04" stroke-width="2" fill="none"/>
+        <line x1="37" y1="54" x2="37" y2="155" stroke="#94a3b8" stroke-dasharray="2,2"/>
+        <text x="40" y="74" font-size="6.5" font-family="Menlo, monospace" fill="#854d0e">44ms</text>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">(t/τ)⁴e^{-t/τ}</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Lead Damping</text>
+      </g>
+
+      <!-- 6. N6 Graded Sigmoid Conductance -->
+      <g transform="translate(471, 314)">
+        <rect width="81" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#059669" font-family="Menlo, monospace">6. g_syn(V)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">Graded L3</text>
+        <path d="M 6 154 C 22 154, 28 66, 50 58 C 64 55, 70 56, 75 56" stroke="#059669" stroke-width="2.2" fill="none"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#0f172a">Analog σ(V)</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Removes Jitter</text>
+      </g>
+
+      <!-- 7. N7 Joint Torque & Limb Angle -->
+      <g transform="translate(564, 314)">
+        <rect width="80" height="192" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="5" y="14" font-size="7.5" font-weight="bold" fill="#e11d48" font-family="Menlo, monospace">7. τ &amp; θ(t)</text>
+        <text x="5" y="25" font-size="6.6" fill="#475569">Joint Output</text>
+        <line x1="6" y1="54" x2="75" y2="54" stroke="#0284c7" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="42" y="49" font-size="6.2" font-family="Menlo, monospace" fill="#0284c7">Target θ*</text>
+        <path d="M 6 154 C 26 152, 38 56, 75 54" stroke="#e11d48" stroke-width="2.4" fill="none"/>
+        <line x1="6" y1="154" x2="75" y2="154" stroke="#64748b" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="5" y="174" font-size="6.6" font-family="Menlo, monospace" fill="#059669" font-weight="bold">+42.8 N·m</text>
+        <text x="5" y="185" font-size="6.4" fill="#64748b">Antag = 0 W</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<table class="xform-table">
+  <thead>
+    <tr>
+      <th style="width:10%;">Neuron</th>
+      <th style="width:15%;">Rust SoA Struct</th>
+      <th style="width:17%;">Synapse / Biophysical Class</th>
+      <th style="width:27%;">Governing Differential / Conductance Equation</th>
+      <th style="width:15%;">Signal Transformation</th>
+      <th style="width:16%;">Role in 38-DoF Humanoid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>N1 · Ia Afferent</strong></td>
+      <td class="mono">ProprioceptiveSpindle</td>
+      <td>Mechanoreceptor Transduction</td>
+      <td class="eq-cell">r_Ia(t) = k_p (L - L_0)_+ + k_v (dL/dt)_+</td>
+      <td>Stretch (m) → 80 Hz Spike Train</td>
+      <td>Encodes real-time muscle length, velocity, and plantar foot GRF.</td>
+    </tr>
+    <tr>
+      <td><strong>N2 · VIP Cell</strong></td>
+      <td class="mono">CorticalGrid::vip_rate</td>
+      <td>GABA_A Disinhibitory Synapse</td>
+      <td class="eq-cell">τ_v da_VIP/dt = -a_VIP + σ(I_prefrontal)</td>
+      <td>Task Intent → Inhibitory Gate on N3</td>
+      <td>Translates Prefrontal LLM stage intent into local apical disinhibition.</td>
+    </tr>
+    <tr>
+      <td><strong>N3 · SST Cell</strong></td>
+      <td class="mono">CorticalGrid::sst_rate</td>
+      <td>Apical Subtractive GABA_A/B</td>
+      <td class="eq-cell">I_SST(t) = g_SST · s_SST(t) · (1 - a_VIP(t))</td>
+      <td>Tonic Apical Clamp → Open Window</td>
+      <td>Prevents premature high-torque bursts until top-down goal arrives.</td>
+    </tr>
+    <tr>
+      <td><strong>N4 · L5 Pyramidal</strong></td>
+      <td class="mono">Pyramidal3CompPoolSoA</td>
+      <td>Clock-Gated AMPA + Ca²⁺ BAC</td>
+      <td class="eq-cell">τ_a dV_a/dt = -V_a + ⟨W_pull, e_3d⟩_+ + g_Ca m_∞(V_a) - I_SST</td>
+      <td>Coincidence → 300 Hz Burst + BTSP</td>
+      <td>Multiplexes posture (single spikes) with 3D spatial pull (bursts).</td>
+    </tr>
+    <tr>
+      <td><strong>N5 · Purkinje/GC</strong></td>
+      <td class="mono">CerebellarSubsystem</td>
+      <td>mGluR1 4th-Order Spectral Delay</td>
+      <td class="eq-cell">E_PF(t) = (t/τ)⁴ exp(-t/τ),  Δw = -η E_PF(t) CF_err(t)</td>
+      <td>300 Hz Burst → 44 ms Lead Filter</td>
+      <td>Compensates 30 ms peripheral delay across 180,224 granule cells.</td>
+    </tr>
+    <tr>
+      <td><strong>N6 · Graded L3</strong></td>
+      <td class="mono">ElegansGradedPoolSoA</td>
+      <td>Non-Spiking Sigmoid Conductance</td>
+      <td class="eq-cell">g_syn(V_pre) = g_max / [1 + exp(-(V_pre - V_1/2)/k)]</td>
+      <td>Spike Burst → Smooth Analog Drive</td>
+      <td>Removes spiking threshold chatter; inhibits antagonist via Ia pathway.</td>
+    </tr>
+    <tr>
+      <td><strong>N7 · α-Motoneuron</strong></td>
+      <td class="mono">HillMuscle88 / Plant38DoF</td>
+      <td>Neuromuscular Ca²⁺ Activation</td>
+      <td class="eq-cell">τ_joint = Σ_m r_m · [a_m(t) f_l(l_m) f_v(v_m) + f_passive]</td>
+      <td>Analog Drive → +42.8 N·m Torque</td>
+      <td>Actuates 38-DoF skeleton at 2.89× higher efficiency than stiff PD.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="footer-caption">
+  <span><strong>Zero-Hardcoding Synaptic Assembly:</strong> All 88×24 entries of W_pull and spinal reflex matrices are discovered in zero-gravity prenatal motor babbling prior to trial execution.</span>
+  <span>Rust Neural Control V4 · Single-Slide Biophysical Architecture</span>
+</div>
+
+</body>
+</html>
