@@ -1,0 +1,129 @@
+{
+  "scenarios": {
+    "1_progressive_diamond_growth": {
+      "robot": "unitree_g1",
+      "triad_count": 87,
+      "growth_trace": [
+        {
+          "tick": 0,
+          "phase": "SPAWNING",
+          "active_nodes": 4,
+          "spawned": 4,
+          "pruned": 0
+        },
+        {
+          "tick": 1,
+          "phase": "BUILDING",
+          "active_nodes": 10,
+          "spawned": 10,
+          "pruned": 0
+        },
+        {
+          "tick": 2,
+          "phase": "BUILDING",
+          "active_nodes": 32,
+          "spawned": 32,
+          "pruned": 0
+        },
+        {
+          "tick": 3,
+          "phase": "BUILDING",
+          "active_nodes": 76,
+          "spawned": 76,
+          "pruned": 0
+        },
+        {
+          "tick": 4,
+          "phase": "BUILDING",
+          "active_nodes": 120,
+          "spawned": 120,
+          "pruned": 0
+        },
+        {
+          "tick": 5,
+          "phase": "BUILDING",
+          "active_nodes": 122,
+          "spawned": 122,
+          "pruned": 0
+        },
+        {
+          "tick": 6,
+          "phase": "WALKING",
+          "active_nodes": 122,
+          "spawned": 122,
+          "pruned": 0
+        }
+      ],
+      "passed": true
+    },
+    "2_clik_ball_reach": {
+      "franka_panda": {
+        "error_start_m": 0.1269,
+        "error_min_m": 0.0204,
+        "error_end_m": 0.0204,
+        "reduction_pct": 83.9,
+        "base_z_start": 0.0,
+        "base_z_end": 0.0,
+        "qpos_tampered": false
+      },
+      "unitree_g1": {
+        "error_start_m": 0.1158,
+        "error_min_m": 0.019,
+        "error_end_m": 0.019,
+        "reduction_pct": 83.6,
+        "base_z_start": 0.79,
+        "base_z_end": 0.792,
+        "qpos_tampered": false
+      },
+      "unitree_h1": {
+        "error_start_m": 0.1273,
+        "error_min_m": 0.072,
+        "error_end_m": 0.1221,
+        "reduction_pct": 43.5,
+        "base_z_start": 0.98,
+        "base_z_end": 1.008,
+        "qpos_tampered": false
+      },
+      "unitree_go2": {
+        "error_start_m": 0.0877,
+        "error_min_m": 0.0258,
+        "error_end_m": 0.0268,
+        "reduction_pct": 70.6,
+        "base_z_start": 0.27,
+        "base_z_end": 0.256,
+        "qpos_tampered": false
+      },
+      "boston_dynamics_spot": {
+        "error_start_m": 0.1005,
+        "error_min_m": 0.0478,
+        "error_end_m": 0.1834,
+        "reduction_pct": 52.4,
+        "base_z_start": 0.46,
+        "base_z_end": 0.436,
+        "qpos_tampered": false
+      }
+    },
+    "3_chained_room_clean_4_objects": {
+      "initial_nodes": 4,
+      "peak_active_nodes": 125,
+      "total_spawned": 143,
+      "total_pruned": 18,
+      "waypoint_final_errors_m": [
+        0.0349,
+        0.0138,
+        0.0411,
+        0.0358
+      ],
+      "qpos_tampered": false
+    },
+    "4_perturbation_midlayer_loop_recovery": {
+      "correcting_before_kick": 0,
+      "correcting_during_kick": 122,
+      "phase_during_kick": "CORRECTING",
+      "correcting_after_recovery": 0,
+      "phase_after_recovery": "CONVERGED",
+      "passed": true
+    }
+  },
+  "elapsed_sec": 5.81
+}

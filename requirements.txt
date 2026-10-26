@@ -1,0 +1,16 @@
+# AnyBody — Optional Python / MuJoCo / Video & Vision Dependencies
+# Note: The core 25.11M-synapse spiking brain and 44-DOF / 88-muscle physics engine
+# are 100% pure Rust (zero external dependencies beyond `Cargo.toml`).
+# Install these packages only if running the MuJoCo multi-morphology inspector,
+# Python unit tests (`pytest`), or the 4K UHD video rendering pipeline.
+
+numpy>=1.26.0
+scipy>=1.11.0
+mujoco>=3.1.0
+robot_descriptions>=1.10.0
+Pillow>=10.0.0
+imageio>=2.34.0
+imageio-ffmpeg>=0.4.9
+httpx>=0.27.0
+edge-tts>=6.1.12
+pytest>=8.0.0

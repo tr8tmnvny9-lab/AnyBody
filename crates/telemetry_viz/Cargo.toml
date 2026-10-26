@@ -1,0 +1,9 @@
+[package]
+name = "telemetry_viz"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro_core = { path = "../neuro_core" }
+body_physics = { path = "../body_physics" }
+subsystems = { path = "../subsystems" }

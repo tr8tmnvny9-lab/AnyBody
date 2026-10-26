@@ -1,0 +1,23 @@
+[package]
+name = "v3_runner"
+version = "0.1.0"
+edition = "2021"
+default-run = "verify_all"
+
+[[bin]]
+name = "verify_all"
+path = "src/main.rs"
+
+[[bin]]
+name = "live_viewer"
+path = "src/bin/live_viewer.rs"
+
+[[bin]]
+name = "telemetry_dumper"
+path = "src/bin/telemetry_dumper.rs"
+
+[dependencies]
+neuro_core = { path = "../neuro_core" }
+body_physics = { path = "../body_physics" }
+subsystems = { path = "../subsystems" }
+telemetry_viz = { path = "../telemetry_viz" }

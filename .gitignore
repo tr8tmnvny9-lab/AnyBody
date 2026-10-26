@@ -1,0 +1,48 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.uv/
+*.egg-info/
+dist/
+build/
+
+# Node / Web
+node_modules/
+.next/
+dist/
+build/
+.turbo/
+
+# macOS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local Data & Model Weights
+data/raw/
+data/processed/
+data/*.mp4
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+
+# Rust & MuJoCo Build / Runtime Artifacts
+/target/
+**/*.rs.bk
+MUJOCO_LOG.TXT
+.pytest_cache/
